@@ -1,11 +1,12 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #FDF6E3; /* Cream */
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    background-color: #d1bd93; /* Cream */
     padding: 20px;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
 }
+
 
 #poemContainer {
     display: grid;
@@ -15,23 +16,24 @@ body {
 }
 
 .grid-item {
-    background-color: #FEFAE0; /* Light Yellow */
+    background-color: #e2dac4; /* Light Yellow */
     border-radius: 10px;
     padding: 20px;
     box-sizing: border-box;
 }
 
 h1 {
+    color: rgb(42, 20, 9);
     font-size: 2em; 
 }
 
 h2 {
-    color: #3D405B; /* Dark Blue */
+    color: rgb(42, 20, 9); /* Dark Brown */
     margin: 0;
 }
 
 .poem {
-    color: #3D405B; /* Dark Blue */
+    color: rgb(42, 20, 9); /* Dark Brown */
     margin: 0;
     white-space: pre-line;
 }
