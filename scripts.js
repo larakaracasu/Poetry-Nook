@@ -12,11 +12,11 @@ window.onload = function() {
 }
 
 function parsePoems(data) {
-    var poemStrs = data.split("\r\n\r\n*").map(poem => poem.trim());  // Split using "\r\n\r\n*"
+    var poemStrs = data.split("\n\n*").map(poem => poem.trim());  // Split using "\r\n\r\n*"
 
     // Convert each poem string into an object with separate title and lines properties
     var poems = poemStrs.map(function(poemStr) {
-        var poemLines = poemStr.split("\r\n");
+        var poemLines = poemStr.split("\n");
         var title = poemLines.shift();
         title = title.replace('*', ''); // remove the asterisk from the title
         return { title: title.trim(), lines: poemLines }; // use trim() to remove any leading/trailing spaces from the title
