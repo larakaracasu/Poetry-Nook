@@ -1,6 +1,8 @@
-# Poetry Hub
+# Poetry Nook 📖✨
+Digital booklet of some short poems I've written over the years.
 
-A small poetry nook for some of my creative pieces.
-
-# Contributors:
+## Contributors
 - Lara Karacasu
+
+## About
+This repository is a work-in-progress, and just for fun.
