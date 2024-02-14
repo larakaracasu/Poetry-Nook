@@ -10,16 +10,22 @@ body {
 
 #poemContainer {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Create a grid layout */
-    grid-gap: 20px; /* Space between grid items */
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); /* Adjusted minimum width */
+    grid-gap: 20px;
     width: 100%;
 }
 
 .grid-item {
-    background-color: #e2dac4; /* Light Yellow */
+    background-color: #e2dac4;
     border-radius: 10px;
     padding: 20px;
     box-sizing: border-box;
+}
+
+.poem {
+    color: rgb(42, 20, 9);
+    margin: 0;
+    white-space: pre-wrap; /* Adjusted to pre-wrap */
 }
 
 h1 {
@@ -30,10 +36,4 @@ h1 {
 h2 {
     color: rgb(42, 20, 9); /* Dark Brown */
     margin: 0;
-}
-
-.poem {
-    color: rgb(42, 20, 9); /* Dark Brown */
-    margin: 0;
-    white-space: pre-line;
 }
