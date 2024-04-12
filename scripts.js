@@ -65,37 +65,39 @@ function returnToMain() {
     populatePoems(sortPoems(parsedPoems));
 }
 
-let cycleWords = ['nook', 'booklet', 'haven'];
-let currentWord = 0;
+let cycleWords = ['nook', 'booklet', 'haven'];  // Words to cycle through
+let currentWord = 0;  // Index of the current word in the cycle
 
 function typeEffect() {
     let header = document.getElementById('typingHeader');
-    let text = "lara's poetry ";
-    let i = text.length;
-    let direction = 1;
-
-    // Start by setting the static part of the header
-    header.innerHTML = text;
+    let baseText = "lara's poetry ";  // The static part of the header
+    header.innerHTML = baseText;  // Initialize header with the static part
+    let i = 0;  // Initialize index for character position in the current word
+    let direction = 1;  // Direction of typing: 1 for typing, -1 for deleting
 
     function typing() {
-        if (direction === 1 && i < text.length + cycleWords[currentWord].length) {
-            header.innerHTML += cycleWords[currentWord].charAt(i - text.length);
-            i++;
-        } else if (direction === -1 && i > text.length) {
-            header.innerHTML = header.innerHTML.slice(0, -1);
-            i--;
-        }
-
-        if (i === text.length + cycleWords[currentWord].length && direction === 1) {
-            setTimeout(typing, 2000); // Wait at the end of typing a word before starting to delete
-            direction = -1;
-        } else if (i === text.length && direction === -1) {
-            currentWord = (currentWord + 1) % cycleWords.length;
-            direction = 1;
-        } else {
-            setTimeout(typing, direction === 1 ? 150 : 100); // Typing speed for adding or removing characters
+        if (direction === 1) {  // Typing the word
+            if (i < cycleWords[currentWord].length) {
+                header.innerHTML += cycleWords[currentWord].charAt(i);
+                i++;
+                setTimeout(typing, 150);  // Typing speed
+            } else {
+                setTimeout(typing, 2000);  // Pause at the end before deleting
+                direction = -1;  // Change direction to deleting
+            }
+        } else {  // Deleting the word
+            if (i > 0) {
+                header.innerHTML = baseText + cycleWords[currentWord].slice(0, i - 1);
+                i--;
+                setTimeout(typing, 100);  // Deleting speed
+            } else {
+                direction = 1;  // Change direction to typing
+                currentWord = (currentWord + 1) % cycleWords.length;  // Move to the next word
+                setTimeout(typing, 500);  // Pause before starting to type the next word
+            }
         }
     }
 
-    typing();
+    typing();  // Start the typing effect
+}
 }
