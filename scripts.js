@@ -62,27 +62,45 @@ window.onload = function() {
     fetch('poems.txt')
         .then(response => response.text())
         .then(data => {
-            parsedPoems = parsePoems(data);
-            displayedPoems = sortPoems(parsedPoems);
-            displayCurrentPoems();
+            let poems = parsePoems(data);
+            populatePoems(poems);
+        })
+        .catch(error => {
+            console.error('There was a problem fetching the poems:', error);
         });
-
-    const header = document.getElementById('typingHeader');
-    typeEffect(header, header.innerText);
-}
+};
 
 function parsePoems(data) {
-    var poemStrs = data.split("\n\n*").map(poem => poem.trim());  // Split using "\r\n\r\n*"
-
-    // Convert each poem string into an object with separate title and lines properties
-    var poems = poemStrs.map(function(poemStr) {
-        var poemLines = poemStr.split("\n");
-        var title = poemLines.shift();
-        title = title.replace('*', ''); // remove the asterisk from the title
-        return { title: title.trim(), lines: poemLines }; // use trim() to remove any leading/trailing spaces from the title
+    // Assuming each poem is separated by two newlines and
+    // the title of the poem is the first line of each poem.
+    let poems = data.split("\n\n").map(poem => {
+        let parts = poem.split("\n");
+        return {
+            title: parts[0],
+            lines: parts.slice(1)
+        };
     });
-
     return poems;
+}
+
+function populatePoems(poems) {
+    let container = document.getElementById('poemContainer');
+    poems.forEach(poem => {
+        let poemElement = document.createElement('div');
+        poemElement.className = 'grid-item';
+
+        let title = document.createElement('h2');
+        title.textContent = poem.title;
+
+        let text = document.createElement('p');
+        text.textContent = poem.lines.join('\n');
+        text.className = 'poem-text';
+
+        poemElement.appendChild(title);
+        poemElement.appendChild(text);
+
+        container.appendChild(poemElement);
+    });
 }
 
 function sortPoems(poems) {
