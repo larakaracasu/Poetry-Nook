@@ -1,56 +1,68 @@
+// Global variables for pagination
+let currentPage = 1;
+let poemsPerPage = 5; // adjust this to display more or less poems per page
+let displayedPoems = [];
+
+// Enhanced to include search functionality
+function searchPoems() {
+    const searchQuery = document.getElementById('searchBar').value.toLowerCase();
+    const filteredPoems = parsedPoems.filter(poem => 
+        poem.title.toLowerCase().includes(searchQuery) || 
+        poem.lines.some(line => line.toLowerCase().includes(searchQuery))
+    );
+    displayedPoems = sortPoems(filteredPoems);
+    currentPage = 1;
+    displayCurrentPoems();
+}
+
+function displayCurrentPoems() {
+    const container = document.getElementById('poemContainer');
+    container.innerHTML = ''; // Clear previous poems
+    const startIndex = (currentPage - 1) * poemsPerPage;
+    const endIndex = startIndex + poemsPerPage;
+    const poemsToShow = displayedPoems.slice(startIndex, endIndex);
+
+    poemsToShow.forEach(populatePoem);
+    document.getElementById('pageInfo').innerText = `Page ${currentPage} of ${Math.ceil(displayedPoems.length / poemsPerPage)}`;
+}
+
+function nextPage() {
+    if (currentPage * poemsPerPage < displayedPoems.length) {
+        currentPage++;
+        displayCurrentPoems();
+    }
+}
+
+function previousPage() {
+    if (currentPage > 1) {
+        currentPage--;
+        displayCurrentPoems();
+    }
+}
+
+// Adding a typing animation for the header
+function typeEffect(element, text, delay = 100) {
+    element.innerHTML = "";
+    let i = 0;
+    function typing() {
+        if (i < text.length) {
+            element.innerHTML += text.charAt(i);
+            i++;
+            setTimeout(typing, delay);
+        }
+    }
+    typing();
+}
+
 window.onload = function() {
     fetch('poems.txt')
         .then(response => response.text())
         .then(data => {
-            // Parse the poems from the fetched data
-            const parsedPoems = parsePoems(data);
-            // Sort the poems
-            const sortedPoems = sortPoems(parsedPoems);
-            // Display the poems
-            populatePoems(sortedPoems);
+            parsedPoems = parsePoems(data);
+            displayedPoems = sortPoems(parsedPoems);
+            displayCurrentPoems();
         });
-}
 
-function parsePoems(data) {
-    var poemStrs = data.split("\n\n*").map(poem => poem.trim());  // Split using "\r\n\r\n*"
-
-    // Convert each poem string into an object with separate title and lines properties
-    var poems = poemStrs.map(function(poemStr) {
-        var poemLines = poemStr.split("\n");
-        var title = poemLines.shift();
-        title = title.replace('*', ''); // remove the asterisk from the title
-        return { title: title.trim(), lines: poemLines }; // use trim() to remove any leading/trailing spaces from the title
-    });
-
-    return poems;
-}
-
-
-
-function sortPoems(poems) {
-    console.log('Before sorting::', poems.map(poem => poem.title));  // log titles before sorting
-    var sortedPoems = poems.sort((a, b) => a.title.localeCompare(b.title, 'en', { sensitivity: 'base' }));
-    console.log('After sorting::', sortedPoems.map(poem => poem.title));  // log titles after sorting
-    return sortedPoems;
-}
-
-
-function populatePoems(poems) {
-    var container = document.getElementById('poemContainer');
-
-    poems.forEach(function(poem) {
-        var gridItem = document.createElement('div');
-        gridItem.className = 'grid-item';
-
-        var title = document.createElement('h2');
-        title.innerText = poem.title;
-        gridItem.appendChild(title);
-
-        var poemText = document.createElement('p');
-        poemText.className = 'poem';
-        poemText.innerText = poem.lines.join('\n');
-        gridItem.appendChild(poemText);
-
-        container.appendChild(gridItem);
-    });
+    const header = document.getElementById('typingHeader');
+    typeEffect(header, header.innerText);
 }
