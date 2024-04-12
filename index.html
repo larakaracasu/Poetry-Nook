@@ -8,17 +8,15 @@
 </head>
 <body>
     <header>
-        <h1 id="typingHeader">lara's poetry nook 📖</h1>
+        <h1 id="typingHeader"></h1>
     </header>
     <main>
-        <input type="text" id="searchBar" placeholder="Search for poems..." onkeyup="searchPoems()">
-        <div class="grid-container" id="poemContainer">
-            <!-- Poems will be inserted here -->
+        <div id="searchBox">
+            <input type="text" id="searchBar" placeholder="Search for poems..." onkeyup="enterSearch(event)">
+            <button onclick="searchPoems()">Search</button>
         </div>
-        <div id="pagination">
-            <button onclick="previousPage()">Previous</button>
-            <span id="pageInfo"></span>
-            <button onclick="nextPage()">Next</button>
+        <div class="grid-container" id="poemContainer">
+            <!-- Poems will be inserted here by the populatePoems function -->
         </div>
     </main>
     <script src="scripts.js"></script>
