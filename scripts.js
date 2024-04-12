@@ -5,8 +5,9 @@ window.onload = function() {
         .then(response => response.text())
         .then(data => {
             parsedPoems = parsePoems(data);
-            populatePoems(parsedPoems);
-            typeEffect(document.getElementById('typingHeader'), 'lara\'s poetry nook 📖');
+            const sortedPoems = sortPoems(parsedPoems);
+            populatePoems(sortedPoems);
+            typeEffect();
         })
         .catch(error => {
             console.error('There was a problem fetching the poems:', error);
@@ -25,13 +26,12 @@ function parsePoems(data) {
 }
 
 function sortPoems(poems) {
-    var sortedPoems = poems.sort((a, b) => a.title.localeCompare(b.title, 'en', { sensitivity: 'base' }));
-    return sortedPoems;
+    return poems.sort((a, b) => a.title.localeCompare(b.title, 'en', { sensitivity: 'base' }));
 }
 
 function populatePoems(poems) {
     var container = document.getElementById('poemContainer');
-    container.innerHTML = '';  // Clear existing poems first
+    container.innerHTML = '';
     poems.forEach(function(poem) {
         var gridItem = document.createElement('div');
         gridItem.className = 'grid-item';
@@ -39,7 +39,6 @@ function populatePoems(poems) {
         title.innerText = poem.title;
         gridItem.appendChild(title);
         var poemText = document.createElement('p');
-        poemText.className = 'poem';
         poemText.innerText = poem.lines.join('\n');
         gridItem.appendChild(poemText);
         container.appendChild(gridItem);
@@ -55,18 +54,26 @@ function searchPoems() {
     populatePoems(filteredPoems);
 }
 
-function typeEffect(element, text, delay = 100) {
+function enterSearch(event) {
+    if (event.key === 'Enter') {
+        searchPoems();
+    }
+}
+
+function typeEffect() {
+    let text = "lara's poetry nook 📖";
     let i = 0;
-    const typing = () => {
+    let header = document.getElementById('typingHeader');
+    function typing() {
         if (i < text.length) {
-            element.textContent += text.charAt(i);
+            header.innerHTML += text.charAt(i);
             i++;
-            setTimeout(typing, delay);
+            setTimeout(typing, 150);
         } else {
-            element.textContent = '';  // Clear and restart typing effect
+            header.innerHTML = '';
             i = 0;
-            setTimeout(typing, 2500); // Wait before restart
+            setTimeout(typing, 2500);
         }
-    };
+    }
     typing();
 }
