@@ -70,34 +70,35 @@ let currentWord = 0;  // Index of the current word in the cycle
 
 function typeEffect() {
     let header = document.getElementById('typingHeader');
-    let baseText = "lara's poetry ";  // The static part of the header
-    header.innerHTML = baseText;  // Initialize header with the static part
-    let i = 0;  // Initialize index for character position in the current word
-    let direction = 1;  // Direction of typing: 1 for typing, -1 for deleting
+    let baseText = "lara's poetry ";
+    header.innerHTML = baseText;
+    let i = 0;
+    let direction = 1;
 
     function typing() {
-        if (direction === 1) {  // Typing the word
+        console.log('Typing:', cycleWords[currentWord], 'Direction:', direction, 'Index i:', i);
+        if (direction === 1) {
             if (i < cycleWords[currentWord].length) {
                 header.innerHTML += cycleWords[currentWord].charAt(i);
                 i++;
-                setTimeout(typing, 150);  // Typing speed
+                setTimeout(typing, 150);
             } else {
-                setTimeout(typing, 2000);  // Pause at the end before deleting
-                direction = -1;  // Change direction to deleting
+                setTimeout(typing, 2000);
+                direction = -1;
             }
-        } else {  // Deleting the word
+        } else {
             if (i > 0) {
                 header.innerHTML = baseText + cycleWords[currentWord].slice(0, i - 1);
                 i--;
-                setTimeout(typing, 100);  // Deleting speed
+                setTimeout(typing, 100);
             } else {
-                direction = 1;  // Change direction to typing
-                currentWord = (currentWord + 1) % cycleWords.length;  // Move to the next word
-                setTimeout(typing, 500);  // Pause before starting to type the next word
+                direction = 1;
+                currentWord = (currentWord + 1) % cycleWords.length;
+                i = 0; // Ensure i is reset
+                setTimeout(typing, 500);
             }
         }
     }
 
-    typing();  // Start the typing effect
-}
+    typing();
 }
