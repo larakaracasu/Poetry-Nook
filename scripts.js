@@ -65,20 +65,37 @@ function returnToMain() {
     populatePoems(sortPoems(parsedPoems));
 }
 
+let cycleWords = ['nook', 'booklet', 'haven'];
+let currentWord = 0;
+
 function typeEffect() {
-    let text = "lara's poetry nook 📖";
-    let i = 0;
     let header = document.getElementById('typingHeader');
+    let text = "lara's poetry ";
+    let i = text.length;
+    let direction = 1;
+
+    // Start by setting the static part of the header
+    header.innerHTML = text;
+
     function typing() {
-        if (i < text.length) {
-            header.innerHTML += text.charAt(i);
+        if (direction === 1 && i < text.length + cycleWords[currentWord].length) {
+            header.innerHTML += cycleWords[currentWord].charAt(i - text.length);
             i++;
-            setTimeout(typing, 150);
+        } else if (direction === -1 && i > text.length) {
+            header.innerHTML = header.innerHTML.slice(0, -1);
+            i--;
+        }
+
+        if (i === text.length + cycleWords[currentWord].length && direction === 1) {
+            setTimeout(typing, 2000); // Wait at the end of typing a word before starting to delete
+            direction = -1;
+        } else if (i === text.length && direction === -1) {
+            currentWord = (currentWord + 1) % cycleWords.length;
+            direction = 1;
         } else {
-            header.innerHTML = '';
-            i = 0;
-            setTimeout(typing, 2500);
+            setTimeout(typing, direction === 1 ? 150 : 100); // Typing speed for adding or removing characters
         }
     }
+
     typing();
 }
