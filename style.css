@@ -1,34 +1,46 @@
-/* Existing styles plus new ones for aesthetics */
-
 body {
-    /* ...existing styles... */
-    background-color: #fffaf0; /* Lighter background for a softer look */
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    background-color: #d1bd93; 
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 header {
-    /* ... */
-    background-color: #ffefd5; /* Soft peach background */
-    /* ... */
+    margin-bottom: 20px;
 }
 
 #typingHeader {
-    /* ... */
-    font-family: 'Courier New', Courier, monospace; /* Typewriter-like font */
-    color: #db7093; /* Soft pink color */
-    white-space: nowrap;
-    overflow: hidden;
-    animation: blinkCursor 0.75s step-end infinite;
+    font-size: 2em; 
+    color: rgb(42, 20, 9);
 }
 
-@keyframes blinkCursor {
-    from, to { border-color: transparent }
-    50% { border-color: #333 }
+#searchBox {
+    margin-bottom: 20px;
 }
 
-/* Additions for input, button, and pagination styles */
-/* ... */
+#searchBar {
+    padding: 10px;
+    font-size: 16px;
+    margin-right: 10px;
+}
 
-/* Responsive design */
-@media (max-width: 768px) {
-    /* ... */
+button {
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-gap: 20px;
+    width: 100%;
+}
+
+.grid-item {
+    background-color: #e2dac4;
+    border-radius: 10px;
+    padding: 20px;
+    box-sizing: border-box;
 }
