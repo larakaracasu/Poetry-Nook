@@ -60,6 +60,11 @@ function enterSearch(event) {
     }
 }
 
+function returnToMain() {
+    document.getElementById('searchBar').value = '';
+    populatePoems(sortPoems(parsedPoems));
+}
+
 function typeEffect() {
     let text = "lara's poetry nook 📖";
     let i = 0;
