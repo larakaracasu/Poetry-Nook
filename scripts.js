@@ -1,16 +1,13 @@
-// Global variables for pagination
 let currentPage = 1;
-let poemsPerPage = 5; // adjust this to display more or less poems per page
+let poemsPerPage = 20;
 let displayedPoems = [];
 
-// Enhanced to include search functionality
 function searchPoems() {
     const searchQuery = document.getElementById('searchBar').value.toLowerCase();
-    const filteredPoems = parsedPoems.filter(poem => 
-        poem.title.toLowerCase().includes(searchQuery) || 
+    displayedPoems = parsedPoems.filter(poem =>
+        poem.title.toLowerCase().includes(searchQuery) ||
         poem.lines.some(line => line.toLowerCase().includes(searchQuery))
     );
-    displayedPoems = sortPoems(filteredPoems);
     currentPage = 1;
     displayCurrentPoems();
 }
@@ -22,7 +19,7 @@ function displayCurrentPoems() {
     const endIndex = startIndex + poemsPerPage;
     const poemsToShow = displayedPoems.slice(startIndex, endIndex);
 
-    poemsToShow.forEach(populatePoem);
+    poemsToShow.forEach(poem => populatePoem(poem));
     document.getElementById('pageInfo').innerText = `Page ${currentPage} of ${Math.ceil(displayedPoems.length / poemsPerPage)}`;
 }
 
@@ -40,8 +37,8 @@ function previousPage() {
     }
 }
 
-// Adding a typing animation for the header
-function typeEffect(element, text, delay = 100) {
+// Typing effect
+function typeEffect(element, text, delay = 150) {
     element.innerHTML = "";
     let i = 0;
     function typing() {
@@ -49,6 +46,13 @@ function typeEffect(element, text, delay = 100) {
             element.innerHTML += text.charAt(i);
             i++;
             setTimeout(typing, delay);
+        } else {
+            // After a short pause, reset and start the typing effect again
+            setTimeout(() => {
+                element.innerHTML = "";
+                i = 0;
+                typing();
+            }, 1500);
         }
     }
     typing();
@@ -65,4 +69,16 @@ window.onload = function() {
 
     const header = document.getElementById('typingHeader');
     typeEffect(header, header.innerText);
+}
+
+function parsePoems(data) {
+    // ...existing parsing function...
+}
+
+function sortPoems(poems) {
+    // ...existing sorting function...
+}
+
+function populatePoem(poem) {
+    // ...existing poem population function...
 }
