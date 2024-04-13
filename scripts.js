@@ -68,41 +68,48 @@ function populatePoems(poems) {
     let container = document.getElementById('poemContainer');
     container.innerHTML = '';
     let sentimentAnalyser = new Sentiment();
-    
+
     poems.forEach(function(poem) {
         let gridItem = document.createElement('div');
         gridItem.className = 'grid-item';
+        gridItem.dataset.sentiment = sentimentAnalyser.analyze(poem.lines.join('\n')).score; // Store sentiment score in data attribute
         
-        // Perform sentiment analysis
-        let sentimentResult = sentimentAnalyser.analyze(poem.lines.join('\n'));
-        let sentimentScore = sentimentResult.score;
-
-        // Add the event listeners for the hover effect
-        gridItem.addEventListener('mouseenter', function() {
-            this.style.backgroundColor = sentimentToColor(sentimentScore);
-            this.style.transition = 'background-color 1s';
-        });
-        gridItem.addEventListener('mouseleave', function() {
-            this.style.backgroundColor = '';
-        });
-
         let title = document.createElement('h2');
         title.innerText = poem.title;
         gridItem.appendChild(title);
-        
+
         let poemText = document.createElement('p');
         poemText.innerText = poem.lines.join('\n');
         gridItem.appendChild(poemText);
 
+        // Set background color based on sentiment score
+        gridItem.style.backgroundColor = sentimentToColor(gridItem.dataset.sentiment);
+
         container.appendChild(gridItem);
+    });
+
+    // Attach hover event listeners after elements are created
+    attachHoverEffects();
+}
+
+function attachHoverEffects() {
+    document.querySelectorAll('.grid-item').forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.style.backgroundColor = sentimentToColor(this.dataset.sentiment);
+            this.style.transition = 'background-color 1s';
+        });
+        item.addEventListener('mouseleave', function() {
+            this.style.backgroundColor = '';
+        });
     });
 }
 
-// Function to map sentiment score to a color
 function sentimentToColor(sentimentScore) {
-    if (sentimentScore > 0) return '#b3ffcc';  // Positive
-    if (sentimentScore < 0) return '#ffcccb';  // Negative
-    return '#f0f0f0';  // Neutral
+    // Example color mapping function
+    // Customize this according to your preferred colors and ranges
+    if (sentimentScore > 0) return '#b3ffcc'; // Positive
+    if (sentimentScore < 0) return '#ffcccb'; // Negative
+    return '#f0f0f0'; // Neutral
 }
 
 function searchPoems() {
