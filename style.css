@@ -43,7 +43,7 @@ button {
     border-radius: 10px;
     padding: 20px;
     box-sizing: border-box;
-    transition: background-color 1s;
+    transition: background-color 1s ease;
 }
 
 .grid-item:hover {
