@@ -64,7 +64,7 @@ function enterSearch(event) {
 
 function returnToMain() {
     document.getElementById('searchBar').value = '';
-    populatePoems(sortPoems(parsedPoems));
+    populatePoems(sortPoems(parsedPoems));  // Resets the display to show all poems
 }
 
 function typeEffect(elementId, words) {
