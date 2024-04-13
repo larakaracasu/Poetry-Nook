@@ -1,5 +1,5 @@
 let parsedPoems = [];
-let searchSuggestions = ['romantic poems', 'classic poetry', 'modern verses'];  // Suggestions for search bar
+let searchSuggestions = ['gold panning', 'return address', "i'm not lost"];  // Suggestions for search bar
 
 window.onload = function() {
     fetch('poems.txt')
@@ -71,14 +71,17 @@ function typeEffect(elementId, words) {
     let target = document.getElementById(elementId);
     let currentWord = 0;
     let baseText = elementId === 'typingHeader' ? "lara's poetry " : '';  // Conditional base text
-    target.innerHTML = baseText;
     let i = 0;
     let direction = 1;
 
     function typing() {
         if (direction === 1) {
             if (i < words[currentWord].length) {
-                target.innerHTML += words[currentWord].charAt(i);
+                if (target.tagName === 'INPUT') {
+                    target.value = baseText + words[currentWord].substring(0, i + 1);
+                } else {
+                    target.innerHTML = baseText + words[currentWord].substring(0, i + 1);
+                }
                 i++;
                 setTimeout(typing, 150);
             } else {
@@ -87,7 +90,11 @@ function typeEffect(elementId, words) {
             }
         } else {
             if (i > 0) {
-                target.innerHTML = baseText + words[currentWord].slice(0, i - 1);
+                if (target.tagName === 'INPUT') {
+                    target.value = baseText + words[currentWord].substring(0, i - 1);
+                } else {
+                    target.innerHTML = baseText + words[currentWord].substring(0, i - 1);
+                }
                 i--;
                 setTimeout(typing, 100);
             } else {
