@@ -1,6 +1,5 @@
 let parsedPoems = [];
-let searchSuggestions = ['gold panning', 'return address', "i'm not lost"];  // Suggestions for search bar
-let timeoutId;  // This will hold the timeout so that it can be cleared when the user interacts with the search bar
+let headerTimeoutId;  // This will hold the timeout so that it can be cleared if needed
 
 window.onload = function() {
     fetch('poems.txt')
@@ -16,11 +15,45 @@ window.onload = function() {
         });
 };
 
+function typeEffect(elementId, words) {
+    let target = document.getElementById(elementId);
+    let currentWord = 0;
+    let baseText = "lara's poetry ";  // Static part for the header
+    target.innerHTML = baseText;  // Initialize with static part
+    let i = 0;
+    let direction = 1;
+
+    function typing() {
+        if (direction === 1) {  // Typing forward
+            if (i < words[currentWord].length) {
+                target.innerHTML += words[currentWord].charAt(i);
+                i++;
+                headerTimeoutId = setTimeout(typing, 150);
+            } else {
+                headerTimeoutId = setTimeout(typing, 2000);  // Pause before deleting
+                direction = -1;
+            }
+        } else {  // Deleting backward
+            if (i > 0) {
+                target.innerHTML = baseText + words[currentWord].slice(0, i - 1);
+                i--;
+                headerTimeoutId = setTimeout(typing, 100);
+            } else {
+                direction = 1;  // Reset to typing forward
+                currentWord = (currentWord + 1) % words.length;  // Cycle to next word
+                headerTimeoutId = setTimeout(typing, 500);  // Pause before typing next word
+            }
+        }
+    }
+
+    typing();
+}
+
 function parsePoems(data) {
-    var poemStrs = data.split("\n\n*").map(poem => poem.trim());
-    var poems = poemStrs.map(function(poemStr) {
-        var poemLines = poemStr.split("\n");
-        var title = poemLines.shift();
+    let poemStrs = data.split("\n\n*").map(poem => poem.trim());
+    let poems = poemStrs.map(function(poemStr) {
+        let poemLines = poemStr.split("\n");
+        let title = poemLines.shift();
         title = title.replace('*', '');
         return { title: title.trim(), lines: poemLines };
     });
@@ -32,15 +65,15 @@ function sortPoems(poems) {
 }
 
 function populatePoems(poems) {
-    var container = document.getElementById('poemContainer');
+    let container = document.getElementById('poemContainer');
     container.innerHTML = '';
     poems.forEach(function(poem) {
-        var gridItem = document.createElement('div');
+        let gridItem = document.createElement('div');
         gridItem.className = 'grid-item';
-        var title = document.createElement('h2');
+        let title = document.createElement('h2');
         title.innerText = poem.title;
         gridItem.appendChild(title);
-        var poemText = document.createElement('p');
+        let poemText = document.createElement('p');
         poemText.innerText = poem.lines.join('\n');
         gridItem.appendChild(poemText);
         container.appendChild(gridItem);
@@ -48,8 +81,8 @@ function populatePoems(poems) {
 }
 
 function searchPoems() {
-    const searchQuery = document.getElementById('searchBar').value.toLowerCase();
-    const filteredPoems = sortPoems(parsedPoems.filter(poem => 
+    let searchQuery = document.getElementById('searchBar').value.toLowerCase();
+    let filteredPoems = sortPoems(parsedPoems.filter(poem => 
         poem.title.toLowerCase().includes(searchQuery) || 
         poem.lines.some(line => line.toLowerCase().includes(searchQuery))
     ));
@@ -66,49 +99,3 @@ function returnToMain() {
     document.getElementById('searchBar').value = '';
     populatePoems(sortPoems(parsedPoems));  // Resets the display to show all poems
 }
-
-function typeEffect(elementId, words) {
-    let target = document.getElementById(elementId);
-    let currentWord = 0;
-    let baseText = elementId === 'typingHeader' ? "lara's poetry " : '';  // Conditional base text
-    let i = 0;
-    let direction = 1;
-
-    function typing() {
-        if (direction === 1) {
-            if (i < words[currentWord].length) {
-                if (target.tagName === 'INPUT') {
-                    target.value = baseText + words[currentWord].substring(0, i + 1);
-                } else {
-                    target.innerHTML = baseText + words[currentWord].substring(0, i + 1);
-                }
-                i++;
-                timeoutId = setTimeout(typing, 150);
-            } else {
-                timeoutId = setTimeout(typing, 2000);
-                direction = -1;
-            }
-        } else {
-            if (i > 0) {
-                if (target.tagName === 'INPUT') {
-                    target.value = baseText + words[currentWord].substring(0, i - 1);
-                } else {
-                    target.innerHTML = baseText + words[currentWord].substring(0, i - 1);
-                }
-                i--;
-                timeoutId = setTimeout(typing, 100);
-            } else {
-                direction = 1;
-                currentWord = (currentWord + 1) % words.length;
-                i = 0;  // Ensure i is reset
-                timeoutId = setTimeout(typing, 500);
-            }
-        }
-    }
-
-    typing();
-}
-
-document.getElementById('searchBar').addEventListener('focus', () => {
-    clearTimeout(timeoutId);  // Stop the typing effect when the search bar is focused
-});
