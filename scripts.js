@@ -1,5 +1,6 @@
 let parsedPoems = [];
 let searchSuggestions = ['gold panning', 'return address', "i'm not lost"];  // Suggestions for search bar
+let timeoutId;  // This will hold the timeout so that it can be cleared when the user interacts with the search bar
 
 window.onload = function() {
     fetch('poems.txt')
@@ -9,6 +10,7 @@ window.onload = function() {
             const sortedPoems = sortPoems(parsedPoems);
             populatePoems(sortedPoems);
             typeEffect('typingHeader', ['nook', 'booklet', 'haven']);  // Start typing effect on header
+            typeEffect('searchBar', searchSuggestions);  // Start typing effect on search bar
         })
         .catch(error => {
             console.error('There was a problem fetching the poems:', error);
@@ -66,7 +68,6 @@ function returnToMain() {
     populatePoems(sortPoems(parsedPoems));
 }
 
-
 function typeEffect(elementId, words) {
     let target = document.getElementById(elementId);
     let currentWord = 0;
@@ -83,9 +84,9 @@ function typeEffect(elementId, words) {
                     target.innerHTML = baseText + words[currentWord].substring(0, i + 1);
                 }
                 i++;
-                setTimeout(typing, 150);
+                timeoutId = setTimeout(typing, 150);
             } else {
-                setTimeout(typing, 2000);
+                timeoutId = setTimeout(typing, 2000);
                 direction = -1;
             }
         } else {
@@ -96,15 +97,20 @@ function typeEffect(elementId, words) {
                     target.innerHTML = baseText + words[currentWord].substring(0, i - 1);
                 }
                 i--;
-                setTimeout(typing, 100);
+                timeoutId = setTimeout(typing, 100);
             } else {
                 direction = 1;
                 currentWord = (currentWord + 1) % words.length;
                 i = 0;  // Ensure i is reset
-                setTimeout(typing, 500);
+                timeoutId = setTimeout(typing, 500);
             }
         }
     }
 
     typing();
 }
+
+document.getElementById('searchBar').addEventListener('focus', () => {
+    clearTimeout(timeoutId);  // Stop the typing effect when the search bar is focused
+});
+
