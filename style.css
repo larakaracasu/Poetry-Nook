@@ -1,6 +1,6 @@
 body {
     font-family: Georgia, 'Times New Roman', Times, serif;
-    background-color: #d1bd93; 
+    background-color: #d1bd93;
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -12,8 +12,9 @@ header {
 }
 
 #typingHeader {
-    font-size: 2em; 
+    font-size: 2em;
     color: rgb(42, 20, 9);
+    cursor: pointer;  // Make the header clickable if it performs an action
 }
 
 #searchBox {
@@ -24,6 +25,7 @@ header {
     padding: 10px;
     font-size: 16px;
     margin-right: 10px;
+    width: 300px;  // Ensuring search bar has a consistent size
 }
 
 button {
@@ -47,6 +49,6 @@ button {
 }
 
 .grid-item:hover {
-    /* This will be overridden by the JavaScript if a sentiment color is set */
+    /* This will be overridden by JavaScript if a sentiment color is set */
     background-color: #f0f0f0; /* Default hover color */
 }
