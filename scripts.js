@@ -67,29 +67,42 @@ function sortPoems(poems) {
 function populatePoems(poems) {
     let container = document.getElementById('poemContainer');
     container.innerHTML = '';
-    const sentimentAnalyser = new Sentiment();
+    let sentimentAnalyser = new Sentiment();
     
     poems.forEach(function(poem) {
         let gridItem = document.createElement('div');
         gridItem.className = 'grid-item';
         
-        // Perform sentiment analysis on the poem's text
+        // Perform sentiment analysis
         let sentimentResult = sentimentAnalyser.analyze(poem.lines.join('\n'));
         let sentimentScore = sentimentResult.score;
-        
-        // Set a data attribute on the grid item for the sentiment score
-        gridItem.dataset.sentiment = sentimentScore;
+
+        // Add the event listeners for the hover effect
+        gridItem.addEventListener('mouseenter', function() {
+            this.style.backgroundColor = sentimentToColor(sentimentScore);
+            this.style.transition = 'background-color 1s';
+        });
+        gridItem.addEventListener('mouseleave', function() {
+            this.style.backgroundColor = '';
+        });
 
         let title = document.createElement('h2');
         title.innerText = poem.title;
         gridItem.appendChild(title);
-
+        
         let poemText = document.createElement('p');
         poemText.innerText = poem.lines.join('\n');
         gridItem.appendChild(poemText);
 
         container.appendChild(gridItem);
     });
+}
+
+// Function to map sentiment score to a color
+function sentimentToColor(sentimentScore) {
+    if (sentimentScore > 0) return '#b3ffcc';  // Positive
+    if (sentimentScore < 0) return '#ffcccb';  // Negative
+    return '#f0f0f0';  // Neutral
 }
 
 function searchPoems() {
