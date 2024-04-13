@@ -1,80 +1,101 @@
 let parsedPoems = [];
-let headerTimeoutId;  // For managing the typing effect timeout
+let headerTimeoutId;  // This will hold the timeout so that it can be cleared if needed
 
-// Function to load poems and initialize effects upon window load
 window.onload = function() {
     fetch('poems.txt')
         .then(response => response.text())
         .then(data => {
             parsedPoems = parsePoems(data);
-            populatePoems(sortPoems(parsedPoems));
-            typeEffect('typingHeader', ['nook', 'booklet', 'haven']);
+            const sortedPoems = sortPoems(parsedPoems);
+            populatePoems(sortedPoems);
+            typeEffect('typingHeader', ['nook', 'booklet', 'haven']);  // Start typing effect on header
         })
         .catch(error => {
             console.error('There was a problem fetching the poems:', error);
         });
 };
 
-// Function to parse poem data
-function parsePoems(data) {
-    return data.split("\n\n*").map(poem => {
-        let lines = poem.trim().split("\n");
-        let title = lines.shift().replace('*', '').trim();
-        return { title, lines };
-    });
+function typeEffect(elementId, words) {
+    let target = document.getElementById(elementId);
+    let currentWord = 0;
+    let baseText = "lara's poetry ";  // Static part for the header
+    target.innerHTML = baseText;  // Initialize with static part
+    let i = 0;
+    let direction = 1;
+
+    function typing() {
+        if (direction === 1) {  // Typing forward
+            if (i < words[currentWord].length) {
+                target.innerHTML += words[currentWord].charAt(i);
+                i++;
+                headerTimeoutId = setTimeout(typing, 150);
+            } else {
+                headerTimeoutId = setTimeout(typing, 2000);  // Pause before deleting
+                direction = -1;
+            }
+        } else {  // Deleting backward
+            if (i > 0) {
+                target.innerHTML = baseText + words[currentWord].slice(0, i - 1);
+                i--;
+                headerTimeoutId = setTimeout(typing, 100);
+            } else {
+                direction = 1;  // Reset to typing forward
+                currentWord = (currentWord + 1) % words.length;  // Cycle to next word
+                headerTimeoutId = setTimeout(typing, 500);  // Pause before typing next word
+            }
+        }
+    }
+
+    typing();
 }
 
-// Function to sort poems
+function parsePoems(data) {
+    let poemStrs = data.split("\n\n*").map(poem => poem.trim());
+    let poems = poemStrs.map(function(poemStr) {
+        let poemLines = poemStr.split("\n");
+        let title = poemLines.shift();
+        title = title.replace('*', '');
+        return { title: title.trim(), lines: poemLines };
+    });
+    return poems;
+}
+
 function sortPoems(poems) {
     return poems.sort((a, b) => a.title.localeCompare(b.title, 'en', { sensitivity: 'base' }));
 }
 
-// Function to populate poems with dynamic mood-based coloring
 function populatePoems(poems) {
     let container = document.getElementById('poemContainer');
     container.innerHTML = '';
-    const sentimentAnalyser = new Sentiment();
-
-    poems.forEach(poem => {
+    poems.forEach(function(poem) {
         let gridItem = document.createElement('div');
         gridItem.className = 'grid-item';
-        let sentimentResult = sentimentAnalyser.analyze(poem.lines.join('\n'));
-        let sentimentScore = sentimentResult.score;
-        gridItem.dataset.sentiment = sentimentScore;
-
         let title = document.createElement('h2');
         title.innerText = poem.title;
+        gridItem.appendChild(title);
         let poemText = document.createElement('p');
         poemText.innerText = poem.lines.join('\n');
-
-        gridItem.appendChild(title);
         gridItem.appendChild(poemText);
         container.appendChild(gridItem);
     });
 }
 
-// Typing effect function
-function typeEffect(elementId, words) {
-    let target = document.getElementById(elementId);
-    let i = 0, currentWord = 0, direction = 1;
-    target.innerHTML = "lara's poetry ";  // Initialize with static part
+function searchPoems() {
+    let searchQuery = document.getElementById('searchBar').value.toLowerCase();
+    let filteredPoems = sortPoems(parsedPoems.filter(poem => 
+        poem.title.toLowerCase().includes(searchQuery) || 
+        poem.lines.some(line => line.toLowerCase().includes(searchQuery))
+    ));
+    populatePoems(filteredPoems);
+}
 
-    function typing() {
-        if (direction === 1 && i < words[currentWord].length) {
-            target.innerHTML += words[currentWord].charAt(i++);
-            setTimeout(typing, 150);
-        } else if (direction === -1 && i > 0) {
-            target.innerHTML = target.innerHTML.slice(0, -1);
-            i--;
-            setTimeout(typing, 100);
-        } else if (i <= 0) {
-            direction = 1;
-            currentWord = (currentWord + 1) % words.length;
-            setTimeout(typing, 500);
-        } else {
-            direction = -1;
-            setTimeout(typing, 2000);
-        }
+function enterSearch(event) {
+    if (event.key === 'Enter') {
+        searchPoems();
     }
-    typing();
+}
+
+function returnToMain() {
+    document.getElementById('searchBar').value = '';
+    populatePoems(sortPoems(parsedPoems));  // Resets the display to show all poems
 }
