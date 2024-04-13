@@ -1,4 +1,5 @@
 let parsedPoems = [];
+let searchSuggestions = ['romantic poems', 'classic poetry', 'modern verses'];  // Suggestions for search bar
 
 window.onload = function() {
     fetch('poems.txt')
@@ -7,7 +8,7 @@ window.onload = function() {
             parsedPoems = parsePoems(data);
             const sortedPoems = sortPoems(parsedPoems);
             populatePoems(sortedPoems);
-            typeEffect();
+            typeEffect('typingHeader', ['nook', 'booklet', 'haven']);  // Start typing effect on header
         })
         .catch(error => {
             console.error('There was a problem fetching the poems:', error);
@@ -65,21 +66,19 @@ function returnToMain() {
     populatePoems(sortPoems(parsedPoems));
 }
 
-let cycleWords = ['nook', 'booklet', 'haven'];  // Words to cycle through
-let currentWord = 0;  // Index of the current word in the cycle
 
-function typeEffect() {
-    let header = document.getElementById('typingHeader');
-    let baseText = "lara's poetry ";
-    header.innerHTML = baseText;
+function typeEffect(elementId, words) {
+    let target = document.getElementById(elementId);
+    let currentWord = 0;
+    let baseText = elementId === 'typingHeader' ? "lara's poetry " : '';  // Conditional base text
+    target.innerHTML = baseText;
     let i = 0;
     let direction = 1;
 
     function typing() {
-        console.log('Typing:', cycleWords[currentWord], 'Direction:', direction, 'Index i:', i);
         if (direction === 1) {
-            if (i < cycleWords[currentWord].length) {
-                header.innerHTML += cycleWords[currentWord].charAt(i);
+            if (i < words[currentWord].length) {
+                target.innerHTML += words[currentWord].charAt(i);
                 i++;
                 setTimeout(typing, 150);
             } else {
@@ -88,13 +87,13 @@ function typeEffect() {
             }
         } else {
             if (i > 0) {
-                header.innerHTML = baseText + cycleWords[currentWord].slice(0, i - 1);
+                target.innerHTML = baseText + words[currentWord].slice(0, i - 1);
                 i--;
                 setTimeout(typing, 100);
             } else {
                 direction = 1;
-                currentWord = (currentWord + 1) % cycleWords.length;
-                i = 0; // Ensure i is reset
+                currentWord = (currentWord + 1) % words.length;
+                i = 0;  // Ensure i is reset
                 setTimeout(typing, 500);
             }
         }
