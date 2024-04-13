@@ -67,15 +67,27 @@ function sortPoems(poems) {
 function populatePoems(poems) {
     let container = document.getElementById('poemContainer');
     container.innerHTML = '';
+    const sentimentAnalyser = new Sentiment();
+    
     poems.forEach(function(poem) {
         let gridItem = document.createElement('div');
         gridItem.className = 'grid-item';
+        
+        // Perform sentiment analysis on the poem's text
+        let sentimentResult = sentimentAnalyser.analyze(poem.lines.join('\n'));
+        let sentimentScore = sentimentResult.score;
+        
+        // Set a data attribute on the grid item for the sentiment score
+        gridItem.dataset.sentiment = sentimentScore;
+
         let title = document.createElement('h2');
         title.innerText = poem.title;
         gridItem.appendChild(title);
+
         let poemText = document.createElement('p');
         poemText.innerText = poem.lines.join('\n');
         gridItem.appendChild(poemText);
+
         container.appendChild(gridItem);
     });
 }
