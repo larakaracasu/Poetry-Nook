@@ -1,3 +1,4 @@
+
 let parsedPoems = [];
 let headerTimeoutId;  // This will hold the timeout so that it can be cleared if needed
 
@@ -15,20 +16,48 @@ window.onload = function() {
         });
 };
 
+function typeEffect(elementId, words) {
+    let target = document.getElementById(elementId);
+    let currentWord = 0;
+    let baseText = "lara's poetry ";  // Static part for the header
+    target.innerHTML = baseText;  // Initialize with static part
+    let i = 0;
+    let direction = 1;
+
+    function typing() {
+        if (direction === 1) {  // Typing forward
+            if (i < words[currentWord].length) {
+                target.innerHTML += words[currentWord].charAt(i);
+                i++;
+                headerTimeoutId = setTimeout(typing, 150);
+            } else {
+                headerTimeoutId = setTimeout(typing, 2000);  // Pause before deleting
+                direction = -1;
+            }
+        } else {  // Deleting backward
+            if (i > 0) {
+                target.innerHTML = baseText + words[currentWord].slice(0, i - 1);
+                i--;
+                headerTimeoutId = setTimeout(typing, 100);
+            } else {
+                direction = 1;  // Reset to typing forward
+                currentWord = (currentWord + 1) % words.length;  // Cycle to next word
+                headerTimeoutId = setTimeout(typing, 500);  // Pause before typing next word
+            }
+        }
+    }
+
+    typing();
+}
+
 function parsePoems(data) {
-    let poems = [];
-    let poemSections = data.split(/\n\n\*/); // Split poems at \n\n followed by *
-    
-    poemSections.forEach((poemStr, index) => {
-        let lines = poemStr.trim().split('\n');
-        
-        // Handle the first poem separately if it doesn't start with *
-        let title = index === 0 && lines[0][0] !== '*' ? lines.shift().trim() : lines.shift().replace('*', '').trim();
-        let formattedLines = lines.join('\n'); // Preserve stanza breaks
-        
-        poems.push({ title, lines: formattedLines });
+    let poemStrs = data.split("\n\n*").map(poem => poem.trim());
+    let poems = poemStrs.map(function(poemStr) {
+        let poemLines = poemStr.split("\n");
+        let title = poemLines.shift();
+        title = title.replace('*', '');
+        return { title: title.trim(), lines: poemLines };
     });
-    
     return poems;
 }
 
@@ -39,24 +68,15 @@ function sortPoems(poems) {
 function populatePoems(poems) {
     let container = document.getElementById('poemContainer');
     container.innerHTML = '';
-    
     poems.forEach(function(poem) {
         let gridItem = document.createElement('div');
         gridItem.className = 'grid-item';
-        gridItem.style.border = '1px solid #ccc'; // Ensure each poem is inside a tile
-        gridItem.style.padding = '10px';
-        gridItem.style.margin = '10px';
-        gridItem.style.borderRadius = '5px';
-        gridItem.style.backgroundColor = '#f9f9f9';
-        
         let title = document.createElement('h2');
-        title.innerHTML = `<b>${poem.title}</b>`;  // Make the title bold
+        title.innerText = poem.title;
         gridItem.appendChild(title);
-        
         let poemText = document.createElement('p');
-        poemText.innerHTML = poem.lines.replace(/\n\n/g, '<br><br>'); // Preserve stanza breaks visually
+        poemText.innerText = poem.lines.join('\n');
         gridItem.appendChild(poemText);
-        
         container.appendChild(gridItem);
     });
 }
@@ -65,7 +85,7 @@ function searchPoems() {
     let searchQuery = document.getElementById('searchBar').value.toLowerCase();
     let filteredPoems = sortPoems(parsedPoems.filter(poem => 
         poem.title.toLowerCase().includes(searchQuery) || 
-        poem.lines.toLowerCase().includes(searchQuery)
+        poem.lines.some(line => line.toLowerCase().includes(searchQuery))
     ));
     populatePoems(filteredPoems);
 }
@@ -80,4 +100,3 @@ function returnToMain() {
     document.getElementById('searchBar').value = '';
     populatePoems(sortPoems(parsedPoems));  // Resets the display to show all poems
 }
-
