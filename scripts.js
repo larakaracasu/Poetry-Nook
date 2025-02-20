@@ -17,11 +17,11 @@ window.onload = function() {
 
 function parsePoems(data) {
     let poems = [];
-    let poemSections = data.split(/\n\n\*/).map(section => section.trim());
+    let poemSections = data.split(/\n\n\*/).map(section => section.trim()); // Split poems at \n\n followed by *
     
-    poemSections.forEach((poemStr, index) => {
+    poemSections.forEach(poemStr => {
         let lines = poemStr.split('\n');
-        let title = index === 0 && !poemStr.startsWith('*') ? lines.shift().trim() : lines.shift().replace('*', '').trim();
+        let title = lines.shift().replace('*', '').trim(); // Remove * from title
         let formattedLines = lines.join('\n'); // Preserve stanza breaks
         poems.push({ title, lines: formattedLines });
     });
