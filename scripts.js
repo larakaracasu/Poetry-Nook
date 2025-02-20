@@ -40,6 +40,11 @@ function populatePoems(poems) {
     poems.forEach(function(poem) {
         let gridItem = document.createElement('div');
         gridItem.className = 'grid-item';
+        gridItem.style.border = '1px solid #ccc'; // Ensure each poem is inside a tile
+        gridItem.style.padding = '10px';
+        gridItem.style.margin = '10px';
+        gridItem.style.borderRadius = '5px';
+        gridItem.style.backgroundColor = '#f9f9f9';
         
         let title = document.createElement('h2');
         title.innerHTML = `<b>${poem.title}</b>`;  // Make the title bold
