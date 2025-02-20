@@ -1,4 +1,3 @@
-
 let parsedPoems = [];
 let headerTimeoutId;  // This will hold the timeout so that it can be cleared if needed
 
