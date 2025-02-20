@@ -52,7 +52,7 @@ function typeEffect(elementId, words) {
 function parsePoems(data) {
     let poemStrs = data.split("\n\n*").map(poem => poem.trim());
     let poems = poemStrs.map(function(poemStr) {
-        let poemLines = poemStr.split("\n");
+        let poemLines = poemStr.split("\n\n");
         let title = poemLines.shift();
         title = title.replace('*', '');
         return { title: title.trim(), lines: poemLines };
