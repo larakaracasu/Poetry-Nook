@@ -17,12 +17,15 @@ window.onload = function() {
 
 function parsePoems(data) {
     let poems = [];
-    let poemSections = data.split(/\n\n\*/).map(section => section.trim()); // Split poems at \n\n followed by *
+    let poemSections = data.split(/\n\n\*/); // Split poems at \n\n followed by *
     
-    poemSections.forEach(poemStr => {
-        let lines = poemStr.split('\n');
-        let title = lines.shift().replace('*', '').trim(); // Remove * from title
+    poemSections.forEach((poemStr, index) => {
+        let lines = poemStr.trim().split('\n');
+        
+        // Handle the first poem separately if it doesn't start with *
+        let title = index === 0 && lines[0][0] !== '*' ? lines.shift().trim() : lines.shift().replace('*', '').trim();
         let formattedLines = lines.join('\n'); // Preserve stanza breaks
+        
         poems.push({ title, lines: formattedLines });
     });
     
@@ -77,3 +80,4 @@ function returnToMain() {
     document.getElementById('searchBar').value = '';
     populatePoems(sortPoems(parsedPoems));  // Resets the display to show all poems
 }
+
